@@ -11,12 +11,15 @@ public class enemyController : MonoBehaviour
     public float max_rotation = 30f;
 
     public Transform checkpoints;
+    Vector2 home;
     Vector2 destination;
     new Rigidbody2D rigidbody2D;
     float timer;
     int mode = 0;
     int counter = 9;
-    bool armed = true;
+    GameManager GM;
+    int id;
+    //bool armed = true;
 
     //int verticle = -1;
 
@@ -27,8 +30,22 @@ public class enemyController : MonoBehaviour
       rigidbody2D = GetComponent<Rigidbody2D>();
       timer = changeTime-1.5f;
       getDestination();
-      Shoot();
+      id = 0;
+      //Shoot();
       //animator = GetComponent<Animator>();
+    }
+
+
+    public void Launch(Transform ch, Vector2 h, GameManager game, int input_id){
+      rigidbody2D = GetComponent<Rigidbody2D>();
+      GM = game;
+      timer = changeTime-1.5f;
+      checkpoints = ch;
+      counter = 0;
+      home = h;
+      id = input_id;
+      getDestination();
+
     }
 
     // Update is called once per frame
@@ -49,7 +66,10 @@ public class enemyController : MonoBehaviour
       if(mode ==0 )
         MoveForward();
       if(mode == 1)
+        MoveForward();
+      if(mode == 2){
         Idle();
+      }
        //Debug.Log("position is..."+position);
 
     }
@@ -65,7 +85,7 @@ public class enemyController : MonoBehaviour
             return;
         }
         var boundBot = other.gameObject.name;
-        Debug.Log( "collide (name) : " + boundBot );
+        //Debug.Log( "collide (name) : " + boundBot );
         if (boundBot=="boundryBot")
         {
             Reset();
@@ -85,6 +105,7 @@ public class enemyController : MonoBehaviour
       Vector2 boundry = GameObject.Find("boundryTop").transform.position;
       position.y = boundry.y;
       this.transform.position = position;
+      getDestination();
     }
 
     public void Idle(){
@@ -95,7 +116,7 @@ public class enemyController : MonoBehaviour
         if(timer < 0)
           position.x += 0.1f * speed *Time.deltaTime ;
         else
-          position.x += 0.1f * speed * Time.deltaTime * -1; 
+          position.x += 0.1f * speed * Time.deltaTime * -1;
         transform.position = position;
      }else{
       timer = changeTime/2;
@@ -112,7 +133,8 @@ public class enemyController : MonoBehaviour
     //Public because we want to call it from elsewhere like the projectile script
     public void Hit()
     {
-        Destroy(gameObject);
+      GM.ShipDestroyed(id, mode);
+      Destroy(gameObject);
         //animator.SetTrigger("Fixed");
     }
 
@@ -135,22 +157,23 @@ public class enemyController : MonoBehaviour
 
     void getDestination(){
       if(checkpoints.transform.childCount == counter){
-        Debug.Log( "counter done"+counter );
-        mode = 1;
+        //Debug.Log( "go home "+home );
+        destination = home;
+        mode ++;
       }
       else{
         destination = checkpoints.GetChild(counter).position;
-        Debug.Log( "counter going "+counter+ " "+ checkpoints.transform.childCount);
+        //Debug.Log( "counter going "+counter+ " "+ checkpoints.transform.childCount);
 
         //Debug.Log("going to "+destination);
-        Shoot();
+        //Shoot();
         counter++;
       }
     }
 
     void MoveForward(){
       Vector2 position = GetComponent<Rigidbody2D>().position;
-      
+
       //Vector2 move_position = Vector2.MoveTowards(transform.position, destination, speed *Time.deltaTime);
       //rigidbody2D.MovePosition(move_position);
       //Vector2 diff = move_position - position;
