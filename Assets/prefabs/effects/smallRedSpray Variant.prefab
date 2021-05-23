@@ -1,0 +1,91 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1001 &6418977579561788358
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 2007079869870918332, guid: 3cf50343c3b38654898fc2e1c1171995, type: 3}
+      propertyPath: m_RootOrder
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2007079869870918332, guid: 3cf50343c3b38654898fc2e1c1171995, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -22.021635
+      objectReference: {fileID: 0}
+    - target: {fileID: 2007079869870918332, guid: 3cf50343c3b38654898fc2e1c1171995, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -9.668124
+      objectReference: {fileID: 0}
+    - target: {fileID: 2007079869870918332, guid: 3cf50343c3b38654898fc2e1c1171995, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2007079869870918332, guid: 3cf50343c3b38654898fc2e1c1171995, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2007079869870918332, guid: 3cf50343c3b38654898fc2e1c1171995, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2007079869870918332, guid: 3cf50343c3b38654898fc2e1c1171995, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2007079869870918332, guid: 3cf50343c3b38654898fc2e1c1171995, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2007079869870918332, guid: 3cf50343c3b38654898fc2e1c1171995, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: -90
+      objectReference: {fileID: 0}
+    - target: {fileID: 2007079869870918332, guid: 3cf50343c3b38654898fc2e1c1171995, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2007079869870918332, guid: 3cf50343c3b38654898fc2e1c1171995, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2007079869870918335, guid: 3cf50343c3b38654898fc2e1c1171995, type: 3}
+      propertyPath: m_Name
+      value: smallRedSpray
+      objectReference: {fileID: 0}
+    - target: {fileID: 2007079869870918978, guid: 3cf50343c3b38654898fc2e1c1171995, type: 3}
+      propertyPath: VelocityModule.speedModifier.scalar
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 2007079869870918978, guid: 3cf50343c3b38654898fc2e1c1171995, type: 3}
+      propertyPath: SizeModule.curve.maxCurve.m_Curve.Array.data[0].time
+      value: 0.0000024382025
+      objectReference: {fileID: 0}
+    - target: {fileID: 2007079869870918978, guid: 3cf50343c3b38654898fc2e1c1171995, type: 3}
+      propertyPath: SizeModule.curve.maxCurve.m_Curve.Array.data[0].value
+      value: 0.13154235
+      objectReference: {fileID: 0}
+    - target: {fileID: 2007079869870918978, guid: 3cf50343c3b38654898fc2e1c1171995, type: 3}
+      propertyPath: LifetimeByEmitterSpeedModule.m_Curve.maxCurve.m_Curve.Array.data[0].time
+      value: 0.005508423
+      objectReference: {fileID: 0}
+    - target: {fileID: 2007079869870918978, guid: 3cf50343c3b38654898fc2e1c1171995, type: 3}
+      propertyPath: LifetimeByEmitterSpeedModule.m_Curve.maxCurve.m_Curve.Array.data[0].value
+      value: 0.35845375
+      objectReference: {fileID: 0}
+    - target: {fileID: 2007079869870918978, guid: 3cf50343c3b38654898fc2e1c1171995, type: 3}
+      propertyPath: LifetimeByEmitterSpeedModule.m_Curve.maxCurve.m_Curve.Array.data[1].inSlope
+      value: -0.13958178
+      objectReference: {fileID: 0}
+    - target: {fileID: 2007079869870918978, guid: 3cf50343c3b38654898fc2e1c1171995, type: 3}
+      propertyPath: LifetimeByEmitterSpeedModule.m_Curve.maxCurve.m_Curve.Array.data[1].inWeight
+      value: 0.105263054
+      objectReference: {fileID: 0}
+    - target: {fileID: 2007079869870918978, guid: 3cf50343c3b38654898fc2e1c1171995, type: 3}
+      propertyPath: LifetimeByEmitterSpeedModule.m_Curve.maxCurve.m_Curve.Array.data[1].outSlope
+      value: -0.13958178
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 3cf50343c3b38654898fc2e1c1171995, type: 3}
