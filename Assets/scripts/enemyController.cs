@@ -6,9 +6,11 @@ public class enemyController : MonoBehaviour
 {
 
     public float speed;
-    public float changeTime = 3.0f;
+    public float changeTime = 2.0f;
     public GameObject projectilePrefab;
     public float max_rotation = 30f;
+    public ParticleSystem explosion;
+    float current_rotation;
 
     public Transform checkpoints;
     Vector2 home;
@@ -19,7 +21,8 @@ public class enemyController : MonoBehaviour
     int counter = 9;
     GameManager GM;
     int id;
-    //bool armed = true;
+    bool armed = false;
+    bool dying = false;
 
     //int verticle = -1;
 
@@ -31,12 +34,13 @@ public class enemyController : MonoBehaviour
       timer = changeTime-1.5f;
       getDestination();
       id = 0;
+      current_rotation = max_rotation;
       //Shoot();
       //animator = GetComponent<Animator>();
     }
 
 
-    public void Launch(Transform ch, Vector2 h, GameManager game, int input_id){
+    public void Launch(Transform ch, Vector2 h, GameManager game, int input_id, bool arm){
       rigidbody2D = GetComponent<Rigidbody2D>();
       GM = game;
       timer = changeTime-1.5f;
@@ -44,7 +48,9 @@ public class enemyController : MonoBehaviour
       counter = 0;
       home = h;
       id = input_id;
+      armed = arm;
       getDestination();
+      current_rotation = max_rotation;
 
     }
 
@@ -56,6 +62,8 @@ public class enemyController : MonoBehaviour
         {
             timer = changeTime;
         }
+        if(timer < 1 && mode < 1)
+          getDestination();
 
     }
 
@@ -63,37 +71,35 @@ public class enemyController : MonoBehaviour
     {
       Vector2 position = GetComponent<Rigidbody2D>().position;
 
-      if(mode ==0 )
+      if(dying == true){
+        Dying();
+      }
+      else if(mode ==0 )
         MoveForward();
-      if(mode == 1)
+      else if(mode == 1)
         MoveForward();
-      if(mode == 2){
+      else if(mode == 2){
         Idle();
       }
-       //Debug.Log("position is..."+position);
 
     }
 
     void OnCollisionEnter2D(Collision2D other)
     {
-        shipController player = other.gameObject.GetComponent<shipController >();
+      var name = other.gameObject.name;
+      
+      if (name=="boundryBot")
+      {
+          Reset();
+      }
+       
+      shipController player = other.gameObject.GetComponent<shipController >();
 
-        if (player != null)
-        {
-            player.ChangeHealth(-1);
-            Destroy(gameObject);
-            return;
-        }
-        var boundBot = other.gameObject.name;
-        //Debug.Log( "collide (name) : " + boundBot );
-        if (boundBot=="boundryBot")
-        {
-            Reset();
-        }
-        // if (boundBot=="checkpoint")
-        // {
-        //     counter++;
-        // }
+      if (player != null)
+      {
+          player.ChangeHealth(-1);
+          Hit();
+      }
 
 
     }
@@ -125,19 +131,47 @@ public class enemyController : MonoBehaviour
 
     }
 
-    public void Attack()
+    public void Dying(){
+      Vector2 position = GetComponent<Rigidbody2D>().position;
+
+      Vector2 move_position = Vector2.MoveTowards(transform.position, destination, speed/10 *Time.deltaTime);
+      transform.position = move_position;
+
+      Quaternion toRotation = Quaternion.AngleAxis(0, Vector3.right);
+
+      transform.rotation  = Quaternion.RotateTowards(transform.rotation, toRotation, 10 * Time.deltaTime);
+    }
+
+    public void Attack(Transform ch)
     {
+      armed = true;
+      this.checkpoints = ch;
+      counter = 0;
+      mode = 0;
+      setThruster(true);
+      current_rotation = max_rotation*2;
       //Debug.Log( "inside attack" );
     }
 
     //Public because we want to call it from elsewhere like the projectile script
     public void Hit()
     {
+      //Debug.Log( "inside Hit" );
+
       GM.ShipDestroyed(id, mode);
-      Destroy(gameObject);
+      mode = 2;
+      dying = true;
+      transform.GetComponent<BoxCollider2D>().enabled = false;
+      StartCoroutine(removeEnemy());
         //animator.SetTrigger("Fixed");
     }
 
+    IEnumerator removeEnemy(){
+      yield return new WaitForSeconds(1f);
+      Instantiate(explosion, transform.position, Quaternion.identity).Play();
+
+      Destroy(gameObject);
+    }
     void Shoot()
     {
         GameObject projectileObject = Instantiate(projectilePrefab, rigidbody2D.position + Vector2.up * 0.5f, Quaternion.identity);
@@ -160,15 +194,27 @@ public class enemyController : MonoBehaviour
         //Debug.Log( "go home "+home );
         destination = home;
         mode ++;
+        if(mode == 1)
+          current_rotation = max_rotation*10;
+        if(mode == 2){
+          current_rotation = max_rotation;
+          GM.addIdle(id);
+          armed = false;
+          setThruster(false);
+        }
       }
       else{
-        destination = checkpoints.GetChild(counter).position;
-        //Debug.Log( "counter going "+counter+ " "+ checkpoints.transform.childCount);
 
-        //Debug.Log("going to "+destination);
+        destination = checkpoints.GetChild(counter).position;
         //Shoot();
         counter++;
+        if( counter == 7 && armed)
+          Shoot();
+        if(counter == 1)
+          current_rotation = max_rotation;
+        //Debug.Log( "next destination is " +counter);
       }
+      timer = changeTime;
     }
 
     void MoveForward(){
@@ -179,7 +225,7 @@ public class enemyController : MonoBehaviour
       //Vector2 diff = move_position - position;
 
       Vector2 diff = destination - position;
-      if(Mathf.Abs(diff.x) < .5f && Mathf.Abs(diff.y)< .5f){
+      if(Mathf.Abs(diff.x) < .1f && Mathf.Abs(diff.y)< .1f){
           getDestination();
       }
 
@@ -187,12 +233,27 @@ public class enemyController : MonoBehaviour
       float angle = Mathf.Atan2(diff.y, diff.x) * Mathf.Rad2Deg + 90;
       Quaternion rot = Quaternion.Euler(0,0,angle);
       //float rot = Quaternion.AngleAxis(angle, Vector3.forward);
-      transform.rotation  = Quaternion.RotateTowards(transform.rotation, rot, max_rotation * Time.deltaTime);
+      transform.rotation  = Quaternion.RotateTowards(transform.rotation, rot, current_rotation * Time.deltaTime);
       //transform.rotation = Quaternion.AngleAxis(angle, Vector3.forward);
 
 
       Vector3 velocity = new Vector3(0, -1*speed * Time.deltaTime, 0);
       transform.position += transform.rotation * velocity;
-
     }
+
+    public int getMode(){
+      return mode;
+    }
+
+  void setThruster(bool on){
+    Transform child = transform.FindChild("thruster").transform;
+     
+    SpriteRenderer big = child.FindChild("big").GetComponent<SpriteRenderer>();
+    //GameObject small = child.FindChild("small");
+
+    if(on)
+      big.enabled = true;
+    else
+      big.enabled=false;
+  }
 }

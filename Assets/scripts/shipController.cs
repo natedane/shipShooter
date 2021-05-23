@@ -9,6 +9,7 @@ public class shipController : MonoBehaviour
   public float speed = 5.0f;
   public int maxHealth = 3;
   public GameObject projectilePrefab;
+  //public ParticleSystem shield;
 
   public int health { get { return currentHealth; }}
   int currentHealth;
@@ -19,7 +20,8 @@ public class shipController : MonoBehaviour
 
   Rigidbody2D rigidbody2d;
   float horizontal;
-  //float vertical;
+
+  float vertical_position;
 
   //Animator animator;
   //Vector2 lookDirection = new Vector2(1,0);
@@ -29,7 +31,7 @@ public class shipController : MonoBehaviour
   {
       rigidbody2d = GetComponent<Rigidbody2D>();
       //animator = GetComponent<Animator>();
-
+      vertical_position = rigidbody2d.transform.position.y;
       currentHealth = maxHealth;
   }
 
@@ -60,6 +62,9 @@ public class shipController : MonoBehaviour
       Vector2 position = rigidbody2d.position;
       position.x = position.x + speed * horizontal * Time.deltaTime;
       //position.y = position.y + speed * vertical * Time.deltaTime;
+      position.y = vertical_position;
+      setThruster();
+
 
       rigidbody2d.MovePosition(position);
   }
@@ -73,10 +78,11 @@ public class shipController : MonoBehaviour
 
           isInvincible = true;
           invincibleTimer = timeInvincible;
+          transform.FindChild("shield").GetComponent<ParticleSystem>().Play();
       }
 
       currentHealth = Mathf.Clamp(currentHealth + amount, 0, maxHealth);
-      //Debug.Log(currentHealth + "/" + maxHealth);
+      Debug.Log(currentHealth + "/" + maxHealth);
   }
 
   void Launch()
@@ -87,5 +93,17 @@ public class shipController : MonoBehaviour
        projectile.Launch(new Vector2(0,1), 300);
 
       //animator.SetTrigger("Launch");
+  }
+
+  void setThruster(){
+    Transform child = transform.FindChild("thruster").transform;
+     
+    SpriteRenderer big = child.FindChild("big").GetComponent<SpriteRenderer>();;
+    //GameObject small = child.FindChild("small");
+
+    if(horizontal != 0)
+      big.enabled = true;
+    else
+      big.enabled=false;
   }
 }

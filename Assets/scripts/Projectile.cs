@@ -5,10 +5,12 @@ using UnityEngine;
 public class Projectile : MonoBehaviour
 {
     Rigidbody2D rigidbody2d;
+    public ParticleSystem spray;
 
     void Awake()
     {
         rigidbody2d = GetComponent<Rigidbody2D>();
+
     }
 
     public void Launch(Vector2 direction, float force)
@@ -32,13 +34,30 @@ public class Projectile : MonoBehaviour
             e.Hit();
         }
 
+        SentryEnemy e2 = other.collider.GetComponent<SentryEnemy>();
+        if (e2 != null)
+        {
+            e2.Hit();
+        }
+
+        carrierEnemy e3 = other.collider.GetComponent<carrierEnemy>();
+        if (e3 != null)
+        {
+            e3.Hit();
+        }
+
         shipController shot = other.gameObject.GetComponent<shipController >();
         if (shot != null)
         {
             shot.ChangeHealth(-1);
         }
-
-
+        //SpriteRenderer spray = child.FindChild("big").GetComponent<SpriteRenderer>();
+        playSystem();
         Destroy(gameObject);
+    }
+
+    void playSystem(){
+        Instantiate(spray, transform.position, Quaternion.identity).Play();
+
     }
 }
