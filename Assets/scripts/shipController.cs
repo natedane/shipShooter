@@ -80,9 +80,9 @@ public class shipController : MonoBehaviour
           invincibleTimer = timeInvincible;
           transform.FindChild("shield").GetComponent<ParticleSystem>().Play();
       }
-
       currentHealth = Mathf.Clamp(currentHealth + amount, 0, maxHealth);
-      Debug.Log(currentHealth + "/" + maxHealth);
+      HealthBar.instance.setHealth(currentHealth);
+      //Debug.Log(currentHealth + "/" + maxHealth);
   }
 
   void Launch()

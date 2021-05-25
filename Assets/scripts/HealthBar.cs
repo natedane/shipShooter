@@ -6,9 +6,9 @@ public class HealthBar : MonoBehaviour
 {
     // Start is called before the first frame update
     public static HealthBar instance { get; private set; }
-    SpriteRenderer red1;
-    SpriteRenderer blue1;
-    SpriteRenderer blue2;
+    Image red1;
+    Image blue1;
+    Image blue2;
     void Start()
     {
         instance = this;
@@ -22,12 +22,12 @@ public class HealthBar : MonoBehaviour
     }
 
 	void setup(){
-		red1 = transform.FindChild("red1").GetComponent<SpriteRenderer>();
-        blue1 = transform.FindChild("blue1").GetComponent<SpriteRenderer>();
-        blue2 = transform.FindChild("blue2").GetComponent<SpriteRenderer>();
+		red1 = transform.FindChild("red1").GetComponent<Image>();
+        blue1 = transform.FindChild("blue1").GetComponent<Image>();
+        blue2 = transform.FindChild("blue2").GetComponent<Image>();
 	}
 
-    void setHealth(int amount){
+    public void setHealth(int amount){
     	if(amount == 1){
     		red1.enabled = true;
     		blue1.enabled = false;
