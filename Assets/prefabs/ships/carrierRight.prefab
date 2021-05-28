@@ -778,6 +778,7 @@ MonoBehaviour:
   changeTime: 2
   projectilePrefab: {fileID: 6102998226619673495, guid: ba019976b2f5d0f4c9f3f7ccc23c4b37, type: 3}
   projectilePrefab2: {fileID: 778414819520650464, guid: 025449dab666bda4ab21d0f8a5ef9a76, type: 3}
+  explosion: {fileID: 5578941821268992760, guid: 3e081e545f00d634db747b452b05cc14, type: 3}
   max_rotation: 1000
   health: 100
   checkpoints: {fileID: 0}

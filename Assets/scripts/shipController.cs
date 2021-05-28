@@ -9,6 +9,7 @@ public class shipController : MonoBehaviour
   public float speed = 5.0f;
   public int maxHealth = 3;
   public GameObject projectilePrefab;
+  public float yPosition = -6f;
   //public ParticleSystem shield;
 
   public int health { get { return currentHealth; }}
@@ -21,7 +22,6 @@ public class shipController : MonoBehaviour
   Rigidbody2D rigidbody2d;
   float horizontal;
 
-  float vertical_position;
 
   //Animator animator;
   //Vector2 lookDirection = new Vector2(1,0);
@@ -29,9 +29,20 @@ public class shipController : MonoBehaviour
   // Start is called before the first frame update
   void Start()
   {
+      setup();
+      HealthBar.instance.setHealth(currentHealth);
+
+  }
+  void Awake()
+  {
+      setup();
+      HealthBar.instance.setHealth(currentHealth);
+
+  }
+  void setup()
+  {
       rigidbody2d = GetComponent<Rigidbody2D>();
       //animator = GetComponent<Animator>();
-      vertical_position = rigidbody2d.transform.position.y;
       currentHealth = maxHealth;
   }
 
@@ -61,13 +72,20 @@ public class shipController : MonoBehaviour
   {
       Vector2 position = rigidbody2d.position;
       position.x = position.x + speed * horizontal * Time.deltaTime;
-      //position.y = position.y + speed * vertical * Time.deltaTime;
-      position.y = vertical_position;
+      if(position.y != this.yPosition)
+        MoveForward();
       setThruster();
 
 
       rigidbody2d.MovePosition(position);
   }
+
+  void MoveForward(){
+      Vector2 position = GetComponent<Rigidbody2D>().position;
+      Vector2 destination = new Vector2(position.x, this.yPosition);
+      Vector2 move_position = Vector2.MoveTowards(transform.position, destination, 2 *Time.deltaTime);
+      rigidbody2d.MovePosition(move_position);
+    }
 
   public void ChangeHealth(int amount)
   {
@@ -82,6 +100,9 @@ public class shipController : MonoBehaviour
       }
       currentHealth = Mathf.Clamp(currentHealth + amount, 0, maxHealth);
       HealthBar.instance.setHealth(currentHealth);
+
+      if(this.currentHealth <= 0)
+        PlayerDeath();
       //Debug.Log(currentHealth + "/" + maxHealth);
   }
 
@@ -98,12 +119,20 @@ public class shipController : MonoBehaviour
   void setThruster(){
     Transform child = transform.FindChild("thruster").transform;
      
-    SpriteRenderer big = child.FindChild("big").GetComponent<SpriteRenderer>();;
+    SpriteRenderer big = child.FindChild("big").GetComponent<SpriteRenderer>();
     //GameObject small = child.FindChild("small");
 
     if(horizontal != 0)
       big.enabled = true;
     else
       big.enabled=false;
+  }
+
+  void PlayerDeath(){
+
+      GameManager.instance.PlayerDestroyed();
+
+      transform.FindChild("explosion").GetComponent<ParticleSystem>().Play();
+      Destroy(gameObject);
   }
 }

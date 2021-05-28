@@ -12,6 +12,14 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8479072637250485060, guid: 6c7bf37c94d3ac44ab293e37128e2bbf, type: 3}
+      propertyPath: stopAction
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 8479072637250485060, guid: 6c7bf37c94d3ac44ab293e37128e2bbf, type: 3}
+      propertyPath: autoRandomSeed
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8479072637250485060, guid: 6c7bf37c94d3ac44ab293e37128e2bbf, type: 3}
       propertyPath: ShapeModule.type
       value: 10
       objectReference: {fileID: 0}

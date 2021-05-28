@@ -9,6 +9,8 @@ public class carrierEnemy : MonoBehaviour
     public float changeTime = 2.0f;
     public GameObject projectilePrefab;
     public GameObject projectilePrefab2;
+    public ParticleSystem explosion;
+
 
     public float max_rotation = 30f;
     public float health = 10;
@@ -146,7 +148,7 @@ public void Hit()
     health--;
     if(health < 1){
 
-    	GM.ShipDestroyed(id, 3);
+    	GM.ShipDestroyed(id, 4);
       Destroy(gameObject);
   	}
         //animator.SetTrigger("Fixed");

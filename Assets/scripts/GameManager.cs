@@ -14,6 +14,8 @@ public class GameManager : MonoBehaviour
     public Transform checkpoints;
     public Transform homes;
 
+    public static GameManager instance { get; private set; }
+
     //private readonly Random _random = new Random();
     //GameObject[] ships;
     Dictionary<int, enemyController> ships;
@@ -29,6 +31,7 @@ public class GameManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+      instance = this;
       Setup(maxShipCount, route,bShipCount[0],cShipCount[0]);
     }
 
@@ -85,11 +88,13 @@ public class GameManager : MonoBehaviour
 
       if(shipsAlive == 0 && bShipCount[2]<=0 && cShipCount[2]<=0){
         if(route <4)
-          Setup(maxShipCount+4, route+1,0,0);
+          Setup(maxShipCount+8, route+1,0,0);
         else if(maxShipCount < 36 && route == 4)
-          Setup(maxShipCount+4, 4,0,0);
-        else if(maxShipCount == 36 && route == 4)
+          Setup(maxShipCount+8, 4,0,0);
+        else if(maxShipCount <= 40 && route == 4)
           Setup(18, 5,1,0);
+        else if(bShipCount[0]==3)
+          Setup(18, 5,0,cShipCount[0]+1);
         else
           Setup(maxShipCount+3, 5,bShipCount[0]+1,0);
 
@@ -129,7 +134,7 @@ public class GameManager : MonoBehaviour
       Vector2 sendShips = spawns.GetChild(r).position;
       GameObject enemyObject = Instantiate(enemyPrefab, sendShips, Quaternion.identity);
       enemyController enemy = enemyObject.GetComponent<enemyController>();
-      enemy.Launch(checkpoints.GetChild(r), getShipHome(0), this, currentShips, arm);
+      enemy.Launch(checkpoints.GetChild(r), getShipHome(0), currentShips, arm);
       ships.Add(currentShips, enemy);
       currentShips++;
       shipsAlive++;
@@ -227,6 +232,10 @@ public class GameManager : MonoBehaviour
       for(int i =0; i < maxShipCount; i++){
         shipArray.Add(i);
       }
+    }
+
+    public void PlayerDestroyed(){
+
     }
 
 }

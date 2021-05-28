@@ -11,6 +11,8 @@ public class SentryEnemy : MonoBehaviour
     public GameObject projectilePrefab;
     public float max_rotation = 30f;
     public float health = 10;
+    public ParticleSystem explosion;
+
     float current_rotation;
 
     public Transform checkpoints;
@@ -23,6 +25,7 @@ public class SentryEnemy : MonoBehaviour
     GameManager GM;
     int id;
     bool armed = false;
+    float point_value = 1000;
 
     //int verticle = -1;
 
@@ -119,6 +122,8 @@ public void Idle(){
       //Debug.Log( "inside idle" );
     if(timer< Time.deltaTime && timer >= 0)
     	Shoot();
+    if(timer==changeTime)
+    	Shoot();
     Quaternion toRotation = Quaternion.AngleAxis(0, Vector3.forward);
     if(toRotation == transform.rotation){
       Vector2 position = GetComponent<Rigidbody2D>().position;
@@ -143,12 +148,16 @@ public void Hit()
   //Debug.Log( "inside Hit" );
 	Debug.Log("big ship hit "+health);
     health--;
+    ScoreKeeper.instance.addPoints(point_value);
     if(health < 1){
 
-    	GM.ShipDestroyed(id, 3);
-      Destroy(gameObject);
+	    GM.ShipDestroyed(id, 3);
+	    Instantiate(explosion, transform.position, Quaternion.identity).Play();
+    	Destroy(gameObject);
   	}
         //animator.SetTrigger("Fixed");
+  	 transform.FindChild("shield").GetComponent<ParticleSystem>().Play();
+
 }
 
 void Shoot()

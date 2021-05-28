@@ -57,7 +57,9 @@ public class Projectile : MonoBehaviour
     }
 
     void playSystem(){
-        Instantiate(spray, transform.position, Quaternion.identity).Play();
+        ParticleSystem s = Instantiate(spray, transform.position, Quaternion.identity);
+        s.Play();
+        Destroy(s, 1f);
 
     }
 }

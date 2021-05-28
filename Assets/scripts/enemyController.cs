@@ -19,10 +19,10 @@ public class enemyController : MonoBehaviour
     float timer;
     int mode = 0;
     int counter = 9;
-    GameManager GM;
     int id;
     bool armed = false;
     bool dying = false;
+    float point_value;
 
     //int verticle = -1;
 
@@ -35,14 +35,14 @@ public class enemyController : MonoBehaviour
       getDestination();
       id = 0;
       current_rotation = max_rotation;
+      point_value = 100f;
       //Shoot();
       //animator = GetComponent<Animator>();
     }
 
 
-    public void Launch(Transform ch, Vector2 h, GameManager game, int input_id, bool arm){
+    public void Launch(Transform ch, Vector2 h, int input_id, bool arm){
       rigidbody2D = GetComponent<Rigidbody2D>();
-      GM = game;
       timer = changeTime-1.5f;
       checkpoints = ch;
       counter = 0;
@@ -71,10 +71,7 @@ public class enemyController : MonoBehaviour
     {
       Vector2 position = GetComponent<Rigidbody2D>().position;
 
-      if(dying == true){
-        Dying();
-      }
-      else if(mode ==0 )
+      if(mode ==0 )
         MoveForward();
       else if(mode == 1)
         MoveForward();
@@ -131,7 +128,7 @@ public class enemyController : MonoBehaviour
 
     }
 
-    public void Dying(){
+    /*public void Dying(){
       Vector2 position = GetComponent<Rigidbody2D>().position;
 
       Vector2 move_position = Vector2.MoveTowards(transform.position, destination, speed/10 *Time.deltaTime);
@@ -140,7 +137,7 @@ public class enemyController : MonoBehaviour
       Quaternion toRotation = Quaternion.AngleAxis(0, Vector3.right);
 
       transform.rotation  = Quaternion.RotateTowards(transform.rotation, toRotation, 10 * Time.deltaTime);
-    }
+    }*/
 
     public void Attack(Transform ch)
     {
@@ -158,20 +155,24 @@ public class enemyController : MonoBehaviour
     {
       //Debug.Log( "inside Hit" );
 
-      GM.ShipDestroyed(id, mode);
+      GameManager.instance.ShipDestroyed(id, mode);
       mode = 2;
       dying = true;
       transform.GetComponent<BoxCollider2D>().enabled = false;
-      StartCoroutine(removeEnemy());
-        //animator.SetTrigger("Fixed");
+      //StartCoroutine(removeEnemy());
+      removeEnemy();
+      ScoreKeeper.instance.addPoints(point_value);
     }
 
-    IEnumerator removeEnemy(){
-      yield return new WaitForSeconds(1f);
-      Instantiate(explosion, transform.position, Quaternion.identity).Play();
-
+    //IEnumerator
+    void removeEnemy(){
+      //yield return new WaitForSeconds(1f);
+      ParticleSystem expl= Instantiate(explosion, transform.position, Quaternion.identity);
+      expl.Play();
+      Destroy(expl, 1f);
       Destroy(gameObject);
     }
+
     void Shoot()
     {
         GameObject projectileObject = Instantiate(projectilePrefab, rigidbody2D.position + Vector2.up * 0.5f, Quaternion.identity);
@@ -184,7 +185,7 @@ public class enemyController : MonoBehaviour
         //float angle = Mathf.Atan2(diff.y, diff.x) * Mathf.Rad2Deg + 90;
 
         //projectile.transform.rotation = Quaternion.AngleAxis(angle, Vector3.forward);
-        projectile.Launch(target - rigidbody2D.position, 100);
+        projectile.Launch(target - rigidbody2D.position, 70);
 
         //animator.SetTrigger("Launch");
     }
@@ -198,7 +199,7 @@ public class enemyController : MonoBehaviour
           current_rotation = max_rotation*10;
         if(mode == 2){
           current_rotation = max_rotation;
-          GM.addIdle(id);
+          GameManager.instance.addIdle(id);
           armed = false;
           setThruster(false);
         }
