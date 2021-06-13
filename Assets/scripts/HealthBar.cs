@@ -31,6 +31,7 @@ public class HealthBar : MonoBehaviour
         black1 = transform.FindChild("black1").GetComponent<SpriteRenderer>();
         black2 = transform.FindChild("black2").GetComponent<SpriteRenderer>();
         black3 = transform.FindChild("black3").GetComponent<SpriteRenderer>();
+        setHealth(3);
 	}
 
     public void setHealth(int amount){

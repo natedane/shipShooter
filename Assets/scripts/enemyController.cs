@@ -8,6 +8,8 @@ public class enemyController : MonoBehaviour
     public float speed;
     public float changeTime = 2.0f;
     public GameObject projectilePrefab;
+    public bool drops;
+    public GameObject pointDrop;
     public float max_rotation = 30f;
     public ParticleSystem explosion;
     float current_rotation;
@@ -51,7 +53,7 @@ public class enemyController : MonoBehaviour
       armed = arm;
       getDestination();
       current_rotation = max_rotation;
-
+      drops = true;
     }
 
     // Update is called once per frame
@@ -157,10 +159,11 @@ public class enemyController : MonoBehaviour
 
       GameManager.instance.ShipDestroyed(id, mode);
       mode = 2;
-      dying = true;
-      transform.GetComponent<BoxCollider2D>().enabled = false;
+      //transform.GetComponent<BoxCollider2D>().enabled = false;
       //StartCoroutine(removeEnemy());
       removeEnemy();
+      if(drops)
+        Instantiate(pointDrop, transform.position, Quaternion.identity);
       ScoreKeeper.instance.addPoints(point_value);
     }
 
@@ -175,11 +178,13 @@ public class enemyController : MonoBehaviour
 
     void Shoot()
     {
+        GameObject t = GameObject.FindGameObjectWithTag("Player");
+        if(t == null)
+           return; 
+        Vector2 target = t.transform.position;
         GameObject projectileObject = Instantiate(projectilePrefab, rigidbody2D.position + Vector2.up * 0.5f, Quaternion.identity);
-        //transform position to fire Start
-        //ransform rotation towards target
-        //po . get rigidbody2d.velocity = transform.forward * speed
-        Vector2 target = GameObject.Find("ship").transform.position;
+
+        //Vector2 target = GameObject.Find("ship").transform.position;
         Projectile projectile = projectileObject.GetComponent<Projectile>();
         //Vector2 diff = target - rigidbody2D.position;
         //float angle = Mathf.Atan2(diff.y, diff.x) * Mathf.Rad2Deg + 90;

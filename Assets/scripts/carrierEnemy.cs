@@ -7,6 +7,7 @@ public class carrierEnemy : MonoBehaviour
 
     public float speed;
     public float changeTime = 2.0f;
+    public float cannonTimer = 1.0f;
     public GameObject projectilePrefab;
     public GameObject projectilePrefab2;
     public ParticleSystem explosion;
@@ -16,11 +17,12 @@ public class carrierEnemy : MonoBehaviour
     public float health = 10;
     float current_rotation;
 
-    public Transform checkpoints;
+    Transform checkpoints;
     Vector2 home;
     Vector2 destination;
     new Rigidbody2D rigidbody2D;
     float timer;
+    float gTimer;
     int mode = 0;
     int counter = 9;
     GameManager GM;
@@ -35,6 +37,7 @@ public class carrierEnemy : MonoBehaviour
     {
       rigidbody2D = GetComponent<Rigidbody2D>();
       timer = changeTime-1.5f;
+      gTimer = cannonTimer;
       getDestination();
       id = 0;
       current_rotation = max_rotation;
@@ -47,6 +50,7 @@ public class carrierEnemy : MonoBehaviour
       rigidbody2D = GetComponent<Rigidbody2D>();
       GM = game;
       timer = changeTime-1.5f;
+      gTimer = cannonTimer;
       checkpoints = ch;
       counter = 0;
       home = h;
@@ -68,6 +72,11 @@ public class carrierEnemy : MonoBehaviour
         if(timer < 1 && mode < 1)
           getDestination();
 
+      gTimer -= Time.deltaTime;
+      if (gTimer<=0){
+        Shoot();
+        gTimer = cannonTimer;
+      }
     }
 
     void FixedUpdate()
@@ -119,9 +128,7 @@ public class carrierEnemy : MonoBehaviour
     }
 
 public void Idle(){
-      //Debug.Log( "inside idle" );
-    if(timer< Time.deltaTime && timer >= 0)
-    	Shoot();
+
     Quaternion toRotation = Quaternion.AngleAxis(0, Vector3.forward);
     if(toRotation == transform.rotation){
       Vector2 position = GetComponent<Rigidbody2D>().position;
@@ -144,7 +151,7 @@ public void Idle(){
 public void Hit()
 {
   //Debug.Log( "inside Hit" );
-	Debug.Log("big ship hit "+health);
+	//Debug.Log("big ship hit "+health);
     health--;
     if(health < 1){
 
@@ -157,23 +164,33 @@ public void Hit()
 void Shoot()
 {
 	Transform rays = transform.FindChild("rays").transform;
-	Vector2 target = GameObject.Find("ship").transform.position;
+	GameObject t = GameObject.FindGameObjectWithTag("Player");
+  if(t == null)
+    return; 
+  Vector2 target = t.transform.position;
 
 	for(int i =0; i < rays.childCount; i++){
 		Vector2 ray = rays.GetChild(i).position;
 	    GameObject projectileObject = Instantiate(projectilePrefab, ray + Vector2.up * 0.5f, Quaternion.identity);
 	    Projectile projectile = projectileObject.GetComponent<Projectile>();
-	    projectile.Launch(target - ray,50);
+	    projectile.Launch(new Vector2(0,-1),300);
+      //projectile.Launch(target - ray,50);
+
 	}
 
 	Transform cannons = transform.FindChild("cannon").transform;
+  int ii = 0;
+  if(armed){
+    ii = 1;
+    armed = false;
+  }
+  else 
+    armed = true;
 
-	for(int i =0; i < cannons.childCount; i++){
-		Vector2 cannon = cannons.GetChild(i).position;
-	    GameObject projectileObject = Instantiate(projectilePrefab2, cannon + Vector2.up * 0.5f, Quaternion.identity);
-	    Projectile projectile = projectileObject.GetComponent<Projectile>();
-	    projectile.Launch(target - cannon,30);
-	}
+	Vector2 cannon = cannons.GetChild(ii).position;
+	GameObject projectileObject2 = Instantiate(projectilePrefab2, cannon + Vector2.up * 0.3f, Quaternion.identity);
+	Projectile projectile2 = projectileObject2.GetComponent<Projectile>();
+	projectile2.Launch(target - cannon,30);
 
 
     //animator.SetTrigger("Launch");

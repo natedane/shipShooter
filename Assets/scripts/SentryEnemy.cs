@@ -8,6 +8,7 @@ public class SentryEnemy : MonoBehaviour
 
     public float speed;
     public float changeTime = 2.0f;
+    public float fireTimeMax = .7f;
     public GameObject projectilePrefab;
     public float max_rotation = 30f;
     public float health = 10;
@@ -20,6 +21,7 @@ public class SentryEnemy : MonoBehaviour
     Vector2 destination;
     new Rigidbody2D rigidbody2D;
     float timer;
+    float fireTimer;
     int mode = 0;
     int counter = 9;
     GameManager GM;
@@ -55,6 +57,7 @@ public class SentryEnemy : MonoBehaviour
       getDestination();
       current_rotation = max_rotation;
       setThruster(true);
+      speed = 4;
     }
 
     // Update is called once per frame
@@ -65,14 +68,17 @@ public class SentryEnemy : MonoBehaviour
         {
             timer = changeTime;
         }
-        if(timer < 1 && mode < 1)
-          getDestination();
 
+      	fireTimer -= Time.deltaTime;
+	    if(fireTimer <= 0){
+	    	Shoot();
+	    	fireTimer = fireTimeMax;
+	    }
     }
 
     void FixedUpdate()
     {
-      Vector2 position = GetComponent<Rigidbody2D>().position;
+      //Vector2 position = GetComponent<Rigidbody2D>().position;
 
       if(mode ==0 )
         MoveForward();
@@ -89,10 +95,10 @@ public class SentryEnemy : MonoBehaviour
     {
       var name = other.gameObject.name;
       
-      if (name=="boundryBot")
-      {
-          Reset();
-      }
+      // if (name=="boundryBot")
+      // {
+      //     Reset();
+      // }
        
       shipController player = other.gameObject.GetComponent<shipController >();
 
@@ -108,22 +114,18 @@ public class SentryEnemy : MonoBehaviour
 
     }
 
-    public void Reset()
-    {
-      //Debug.Log( "inside Reset" );
-      Vector2 position = GetComponent<Rigidbody2D>().position;
-      Vector2 boundry = GameObject.Find("boundryTop").transform.position;
-      position.y = boundry.y;
-      this.transform.position = position;
-      getDestination();
-    }
+    // public void Reset()
+    // {
+    //   //Debug.Log( "inside Reset" );
+    //   Vector2 position = GetComponent<Rigidbody2D>().position;
+    //   Vector2 boundry = GameObject.Find("boundryTop").transform.position;
+    //   position.y = boundry.y;
+    //   this.transform.position = position;
+    //   getDestination();
+    // }
 
 public void Idle(){
       //Debug.Log( "inside idle" );
-    if(timer< Time.deltaTime && timer >= 0)
-    	Shoot();
-    if(timer==changeTime)
-    	Shoot();
     Quaternion toRotation = Quaternion.AngleAxis(0, Vector3.forward);
     if(toRotation == transform.rotation){
       Vector2 position = GetComponent<Rigidbody2D>().position;
@@ -163,14 +165,24 @@ public void Hit()
 void Shoot()
 {
 	Transform rays = transform.FindChild("rays").transform;
-	Vector2 target = GameObject.Find("ship").transform.position;
+	GameObject t = GameObject.FindGameObjectWithTag("Player");
 
-	for(int i =0; i < rays.childCount; i++){
-		Vector2 ray = rays.GetChild(i).position;
-	    GameObject projectileObject = Instantiate(projectilePrefab, ray + Vector2.up * 0.5f, Quaternion.identity);
-	    Projectile projectile = projectileObject.GetComponent<Projectile>();
-	    projectile.Launch(target - ray,30);
-	}
+	if(t == null)
+        return;	
+	Vector2 target = t.transform.position;
+    int i = 0;
+    if(armed){
+    	i = 1;
+    	armed = false;
+    }
+    else
+    	armed = true;
+	//for(int i =0; i < rays.childCount; i++){
+	Vector2 ray = rays.GetChild(i).position;
+    GameObject projectileObject = Instantiate(projectilePrefab, ray + Vector2.up * 0.4f, Quaternion.identity);
+    Projectile projectile = projectileObject.GetComponent<Projectile>();
+    projectile.Launch(target - ray,30);
+	//}
 
     //animator.SetTrigger("Launch");
 }

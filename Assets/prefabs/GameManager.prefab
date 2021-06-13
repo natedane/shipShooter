@@ -43,13 +43,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 619d04a36e3098b468fe31a1a0430815, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxShipCount: 18
-  cShipCount: 010000000000000000000000
+  maxShipCount: 16
+  cShipCount: 000000000000000000000000
   bShipCount: 000000000000000000000000
   spawns: {fileID: 2368381999856170282, guid: 8efc0e54d13d3654c833058e8eb1adf7, type: 3}
   enemyPrefab: {fileID: 4986378247146113032, guid: f621e5ef881e6c94695ede0624297df9, type: 3}
   bomberPrefab: {fileID: 3210680749734510037, guid: 89a108a8159a5b340a42f5d68ec010fe, type: 3}
-  carrierPrefab: {fileID: 5856619643175008985, guid: df2502a3c1037cf49af66b5f34895765, type: 3}
+  carrierPrefab: {fileID: 1264290527074638769, guid: 355f1afd52cadf249bdacbdbae1f29d3, type: 3}
   checkpoints: {fileID: 0}
   homes: {fileID: 3134322021925657070, guid: bf48a9a5cafc3c140938332f3056ace8, type: 3}
-  route: 5
+  route: 0

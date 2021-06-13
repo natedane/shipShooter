@@ -13,11 +13,12 @@ public class GameManager : MonoBehaviour
     public GameObject carrierPrefab;
     public Transform checkpoints;
     public Transform homes;
-
+    public int gameMode = 0;
     public static GameManager instance { get; private set; }
 
     //private readonly Random _random = new Random();
     //GameObject[] ships;
+    
     Dictionary<int, enemyController> ships;
     List<int>shipArray;
     int currentShips;
@@ -31,12 +32,14 @@ public class GameManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+      gameMode = 0;
       instance = this;
-      Setup(maxShipCount, route,bShipCount[0],cShipCount[0]);
+      //Setup(maxShipCount, route,bShipCount[0],cShipCount[0]);
     }
 
-    void Setup(int c, int r, int b, int carr){
-      timer = 5f;
+    public void Setup(int c, int r, int b, int carr){
+      gameMode = 1;
+      timer = 4f;
       currentShips = 0;
       maxShipCount = c;
       ships = new Dictionary<int, enemyController>();
@@ -46,10 +49,13 @@ public class GameManager : MonoBehaviour
       setList();
       bShipCount = new int[]{b, 0, 0};
       cShipCount = new int[]{carr, 0, 0};
+      //Debug.Log("game setup complete");
     }
     // Update is called once per frame
     void Update()
     {
+        if(gameMode != 1)
+          return;
 
         if(timer < 0){
           ready = true;
@@ -67,10 +73,10 @@ public class GameManager : MonoBehaviour
         else if(ready == true && cShipCount[1] < cShipCount[0]){
           sendCShip();
         }
-        else if(shipsAlive > 0 && shipsIdle > maxShipCount-2)
+
+        if(shipsAlive > 0 && shipsIdle > maxShipCount-2)
         {
-          //Debug.Log("ships idle are: "+shipsIdle+" "+maxShipCount);
-          AttackRun(maxShipCount - shipsIdle);
+          AttackRun(shipsIdle - (maxShipCount-2));
         }
     }
 
@@ -79,15 +85,18 @@ public class GameManager : MonoBehaviour
         shipsIdle ++;
       if(mode == 3)
         bShipCount[2]--;
-      if(mode == 4)
+      else if(mode == 4)
         cShipCount[2]--;
-      shipsAlive --;
+      else
+        shipsAlive --;
       ships.Remove(id);
       shipArray.Remove(id);
       //Debug.Log("ship destroyed, left: "+shipsAlive+" "+shipsIdle);
 
-      if(shipsAlive == 0 && bShipCount[2]<=0 && cShipCount[2]<=0){
-        if(route <4)
+      if(shipsAlive <= 0 && bShipCount[2]<=0 && cShipCount[2]<=0){
+        gameMode = 2;
+        MenuSetup.instance.nextLevel();
+        /*if(route <4)
           Setup(maxShipCount+8, route+1,0,0);
         else if(maxShipCount < 36 && route == 4)
           Setup(maxShipCount+8, 4,0,0);
@@ -97,7 +106,7 @@ public class GameManager : MonoBehaviour
           Setup(18, 5,0,cShipCount[0]+1);
         else
           Setup(maxShipCount+3, 5,bShipCount[0]+1,0);
-
+        */
       }
       //ships[shipNumber] = null;
     }
@@ -115,7 +124,12 @@ public class GameManager : MonoBehaviour
         int homePadding = (10 - perRow)/2;
         shipPos += homePadding;
      }
-     else{
+     else if (type == 2){
+      shipRow = 3;
+      shipPos = cShipCount[1] + (9 - cShipCount[0])/2;
+      //Debug.Log("this ship is in "+shipRow+" "+shipPos+" "+type);
+
+     }else{
       shipRow = 3;
       shipPos = bShipCount[1] + (9 - bShipCount[0])/2;
       //Debug.Log("this ship is in "+shipRow+" "+shipPos+" "+type);
@@ -156,7 +170,7 @@ public class GameManager : MonoBehaviour
       GameObject enemyObject = Instantiate(carrierPrefab, sendShips, Quaternion.identity);
       carrierEnemy cenemy = enemyObject.GetComponent<carrierEnemy>();
 
-      cenemy.Launch(checkpoints.GetChild(4), getShipHome(1), this, cShipCount[1], true);
+      cenemy.Launch(checkpoints.GetChild(4), getShipHome(2), this, cShipCount[1], true);
 
       cShipCount[1]++;
       cShipCount[2]++;
@@ -223,7 +237,7 @@ public class GameManager : MonoBehaviour
     }
 
     public void addIdle(int id){
-      //Debug.Log("idle is " +id);
+      //Debug.Log("idle is " +id+" idle"+this.shipsIdle+" max"+this.maxShipCount+ " alive" + shipsAlive);
       shipsIdle ++;
     }
 
@@ -235,7 +249,8 @@ public class GameManager : MonoBehaviour
     }
 
     public void PlayerDestroyed(){
-
+      gameMode = 3;
+      MenuSetup.instance.gameOver();
     }
 
 }

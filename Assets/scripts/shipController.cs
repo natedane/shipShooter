@@ -36,7 +36,7 @@ public class shipController : MonoBehaviour
   void Awake()
   {
       setup();
-      HealthBar.instance.setHealth(currentHealth);
+      //HealthBar.instance.setHealth(currentHealth);
 
   }
   void setup()
@@ -72,8 +72,9 @@ public class shipController : MonoBehaviour
   {
       Vector2 position = rigidbody2d.position;
       position.x = position.x + speed * horizontal * Time.deltaTime;
-      if(position.y != this.yPosition)
+      if(position.y < this.yPosition){
         MoveForward();
+      }
       setThruster();
 
 
@@ -81,10 +82,14 @@ public class shipController : MonoBehaviour
   }
 
   void MoveForward(){
-      Vector2 position = GetComponent<Rigidbody2D>().position;
-      Vector2 destination = new Vector2(position.x, this.yPosition);
-      Vector2 move_position = Vector2.MoveTowards(transform.position, destination, 2 *Time.deltaTime);
-      rigidbody2d.MovePosition(move_position);
+    Vector3 velocity = new Vector3(0, 2 * Time.deltaTime, 0);
+    transform.position += transform.rotation * velocity;
+      // Vector2 position = GetComponent<Rigidbody2D>().position;
+      // Vector2 destination = new Vector2(position.x, this.yPosition);
+      // Vector2 move_position = Vector2.MoveTowards(position, destination, 2 *Time.deltaTime);
+      // Debug.Log("moving forward, "+move_position+" from "+ position);
+
+      // rigidbody2d.MovePosition(move_position);
     }
 
   public void ChangeHealth(int amount)
@@ -122,7 +127,7 @@ public class shipController : MonoBehaviour
     SpriteRenderer big = child.FindChild("big").GetComponent<SpriteRenderer>();
     //GameObject small = child.FindChild("small");
 
-    if(horizontal != 0)
+    if(horizontal != 0 || transform.position.y < this.yPosition)
       big.enabled = true;
     else
       big.enabled=false;

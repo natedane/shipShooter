@@ -394,6 +394,8 @@ MonoBehaviour:
   speed: 6
   changeTime: 2
   projectilePrefab: {fileID: 6102998226619673495, guid: ba019976b2f5d0f4c9f3f7ccc23c4b37, type: 3}
+  drops: 0
+  pointDrop: {fileID: 1840290398319763625, guid: 46a128a3638d45248b28611d2dca5639, type: 3}
   max_rotation: 100
   explosion: {fileID: 5578941821268992760, guid: 3e081e545f00d634db747b452b05cc14, type: 3}
   checkpoints: {fileID: 0}
